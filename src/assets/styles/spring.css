@@ -1,0 +1,19 @@
+/* 登录页背景 */
+.background-shape {
+    position: absolute;
+    height: 50vh;
+    width: 100%;
+    background: linear-gradient(145deg,#46a57a,#b2ebb7)
+}
+
+/* button */
+button.primary{
+    background-color: #4fc08d;
+    color: #ffffff;
+}
+
+/* input */
+input:focus{
+    border:  2px solid #b2d6c6;
+    box-sizing: border-box
+}

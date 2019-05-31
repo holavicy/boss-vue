@@ -1,0 +1,106 @@
+html,body{
+padding: 0;
+margin: 0;
+background-color: #fafafa;
+}
+
+input{
+    padding: 2px 12px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: none;
+    outline: none;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+input[type=text], input[type=number], input[type=password] {
+    border: 1px solid #aaa;
+}
+
+button {
+    border: none;
+    background-color: transparent;
+    outline: none;
+    height:30px;
+    line-height: 30px;
+    text-align: center;
+    border-radius: 4px;
+    box-sizing: border-box;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.disabled{
+    cursor: no-drop;
+    opacity: .65;
+    pointer-events: none
+}
+
+/* table */
+.table{
+    border-collapse: collapse;
+    background-color: #ffffff;
+    min-width: 100%;
+    height: auto;
+    box-sizing: border-box;
+}
+
+.table th, .table td{
+    padding: 2px 8px;
+    box-sizing: border-box;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+
+.table th{
+    background-color: #dcdcdc;
+    font-size: 14px;
+}
+
+.table td{
+    font-size: 13px;
+}
+
+.table-border td, .table-border th{
+border: 1px solid #CCC
+}
+
+.table-nowrap {
+    word-break: keep-all;
+}
+
+.table-hover tr:hover{
+    background-color: #CCC;
+    cursor: pointer;
+}
+
+.table-striped tr:nth-child(even){
+    background-color: #f9f9f9
+}
+
+/* a */
+a{
+    color: #0088cc;
+    cursor: pointer;
+    margin-right: .4rem;
+    font-size: 12px;
+    text-decoration:none;
+}
+
+a:hover{
+    text-decoration: underline;
+    color:#005580
+}
+
+.for-disabled {
+    color: #aeaeae;
+    pointer-events: none;
+}
+
+/* ul li */
+ul,li{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}

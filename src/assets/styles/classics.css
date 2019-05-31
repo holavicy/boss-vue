@@ -1,0 +1,20 @@
+/* 登录背景色 */
+.background-shape {
+    position: absolute;
+    height: 50vh;
+    width: 100%;
+    background: linear-gradient(145deg,#335b75,#4395ff)
+}
+
+
+/* button */
+button.primary{
+    background-color: #4395ff;
+    color: #ffffff;
+}
+
+/* input */
+input[type=text]:focus, input[type=number]:focus, input[type=password]:focus{
+    border: 2px solid #4395ff;
+    box-sizing: border-box
+}

@@ -1,0 +1,16 @@
+.iconfont {
+    font-family:"iconfont" !important;
+    font-size:16px;
+    font-style:normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+.icon-zeng::before{
+    content: "\8d60";
+    color: #ffffff;
+    background-color: red;
+    font-size: 14px;
+    padding: 4px;
+    border-radius: 50%;
+}

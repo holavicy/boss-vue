@@ -428,7 +428,6 @@ export default {
                isHaveReceipt: this.selectHasInvoice,
                page: page?page-1:0,
                rows:size?size:20,
-
            }
             this.axios.get('/emro_boss/order/getOrder', {params:data})
             .then((res) => {
@@ -595,7 +594,6 @@ export default {
     width:94%;
     overflow-x:auto;
     border:1px solid #CCC;
-    margin-top:20px;
     margin-right: .3rem
 }
 .rightNav {

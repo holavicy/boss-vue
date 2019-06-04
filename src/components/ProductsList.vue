@@ -83,6 +83,7 @@ export default {
 <style>
 .products-list {
     padding: 0 20px;
+    margin-bottom: 20px;
 }
 
 .products-list p {

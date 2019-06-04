@@ -6,10 +6,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    currRouteNme: String,
-    oriMenuList:Array,
-    menuList:Array,
-    breadCrumbList:Array,
+    currRouteNme: '',
+    oriMenuList:[],
+    menuList:[],
+    breadCrumbList:[],
     currColor:''
   },
 

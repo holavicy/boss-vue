@@ -104,3 +104,27 @@ ul,li{
     margin: 0;
     list-style: none;
 }
+
+/*input*/
+.input-block{
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.input-block label{
+    min-width: 60px;
+    text-align: right;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+.input-block .label-mini {
+    height: 26px;
+    line-height: 26px;
+    font-size: 14px;
+}
+
+.top-mask {
+    z-index: 10000 !important;
+}

@@ -36,11 +36,12 @@ export default {
 
 <style scoped>
 .page-list {
-    margin-top: 10px;
+    /* margin-top: 10px; */
 }
 .search-block{
     display: flex;
     flex-wrap: wrap;
+    margin-bottom: 10px;
     /* box-shadow: 0 2px 2px rgba(10,16,20,.24),0 0 2px rgba(10,16,20,.12) */
 }
 

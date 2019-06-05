@@ -5,14 +5,13 @@
         <div class="customer-block">
             <div class="input-block">
                 <label class="label-mini">公司名称:</label>
-                <el-input placeholder="请选择客户" class="input-with-select"
+                <el-input placeholder="请选择客户" class="cus-name"
                           v-model="selectedCus.name" 
                           :disabled="true"
                           size="mini">
-                    <el-button slot="append" icon="el-icon-search" @click="chooseCustomer()"></el-button>
                 </el-input>
+                <el-button type="primary" @click="chooseCustomer()">选择客户</el-button>
             </div>
-            
         </div>
 
         <!--订单商品信息-->
@@ -29,7 +28,7 @@
                  <el-button type="primary" :disabled="!orderStore" @click="chooseGoods()">选择商品</el-button>
             </div>
            
-            <table class="table table-border table-nowrap table-striped selectedGoodsTable">
+            <table class="table table-border table-nowrap selectedGoodsTable">
             <thead>
                 <tr>
                     <th>品名</th>
@@ -44,87 +43,152 @@
                     <th>面价</th>
                     <th>折扣</th>
                     <th>单价</th>
-                    <th>金额</th>
+                    <th>金额(元)</th>
                     <th>操作</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item,index) in selectedGoodsList" :key="index">
+                <tr v-for="(item,index) in selectedFormedList" :key="index" :class="[item.isMainGoods || !item.id?'':'sub-goods']">
                     <td>{{item.title}}</td>
                     <td>{{item.buyNo}}</td>
                     <td>{{item.model}}</td>
                     <td>{{item.brandNameCn}}</td>
                     <td>{{item.series}}</td>
                     <td style="text-align:center">{{item.measure}}</td>
-                    <td><input type="text" style="width:100%" v-show="item.id" v-model="item.num"/></td>
-                    <td style="text-align:center">{{item.stock}}</td>
+                    <td style="width:100px;text-align:center">
+                        <input type="text" style="width:100%;text-align:center" 
+                        oninput="value=value.replace(/[^\d]/g,'')"
+                        v-show="item.id && item.isMainGoods" 
+                        v-model="item.num"/>
+                        <span v-show="item.id && !item.isMainGoods">{{item.num}}</span>
+                    </td>
+                    <!--商品数量-->
+                    <td style="text-align:center">
+                        <span  v-show="item.storesCnt==0">{{item.stock}}</span>
+                         <select v-model="item.stockSelId" v-show="item.storesCnt&&item.storesCnt!=0">
+                            <option v-for="i in item.dealerStoreList" :key="i.dealerStoreId" :value="i.dealerStoreId">{{i.storeNm}}</option>
+                        </select>
+                    </td>
                     <td style="text-align:center">{{item.couponPrice}}</td>
                     <td style="text-align:center">{{item.unitPrice}}</td>
-                    <td><input type="text" style="width:100%" v-show="item.id" v-model="item.discount"/></td>
-                    <td><input type="text" style="width:100%" v-show="item.id" v-model="item.saleUnitPrice"/></td>
+                    <!--商品折扣-->
+                    <td style="width:140px;text-align:center">
+                        <input type="text" style="width:100%;text-align:center" 
+                                v-show="item.id && item.isMainGoods" 
+                                v-model="item.discount" @keyup="discountChange(item)"/>
+                        <span v-show="item.id && !item.isMainGoods">{{item.discount}}</span>
+                    </td>
+                    <!--商品单价-->
+                    <td style="width:140px;text-align:center">
+                        <input type="text" style="width:100%;text-align:center" 
+                                v-show="item.id && item.isMainGoods" 
+                                v-model="item.saleUnitPrice" 
+                                @keyup="saleUnitPrice(item)"/>
+                        <span v-show="item.id && !item.isMainGoods">{{item.saleUnitPrice}}</span>
+                    </td>
                     <td style="text-align:center">{{item.id?item.num*item.saleUnitPrice || 0:''}}</td>
-                    <td style="text-align:center"><a v-show="item.id" @click="deleteGoods(index)">删除</a></td>
+                    <td style="text-align:center"><a v-show="item.id && item.isMainGoods" @click="deleteGoods(item.indexNo)">删除</a></td>
                 </tr>
             </tbody>
             </table>
         </div>
 
         <!--订单信息-->
-        <div class="order-block content-block">
-    
-            <div class="input-block">
-                <label class="label-mini">订单来源:</label>
-                <el-select v-model="orderSource" placeholder="请选择" size="mini">
-                    <el-option v-for="item in sourceList" 
-                    :key="item.id"
-                    :label="item.optText"
-                    :value="item.optValue">
-                    </el-option>
-                </el-select>
+        <div class="content-block">
+            <div class="order-block">
+                <div class="input-block">
+                    <label class="label-mini">货款合计:</label>
+                    <el-input placeholder="" class="input-with-select" disabled
+                            v-model="goodsTotalAmount" 
+                            size="mini">
+                    </el-input>
+                </div>
+
+                <div class="input-block">
+                    <label class="label-mini">邮资:</label>
+                    <el-input placeholder="" class="input-with-select"
+                            v-model="freightAmount" 
+                            size="mini">
+                    </el-input>
+                </div>
+
+                <div class="input-block">
+                    <label class="label-mini">合计金额:</label>
+                    <el-input placeholder="" class="input-with-select" disabled
+                            v-model="totalAmount" 
+                            size="mini">
+                    </el-input>
+                </div>
             </div>
-            <div class="input-block">
-                <label class="label-mini">收货人:</label>
-                <el-input placeholder="请选择收货人" class="input-with-select"
-                          v-model="selectedConsignee.name" 
-                          :disabled="true"
-                          size="mini">
-                    <el-button slot="append" icon="el-icon-search" @click="chooseCustomer()"></el-button>
-                </el-input>
+                    
+            <div class="order-block">
+                <div class="input-block">
+                    <label class="label-mini">订单来源:</label>
+                    <el-select v-model="orderSource" placeholder="请选择" size="mini">
+                        <el-option v-for="item in sourceList" 
+                        :key="item.id"
+                        :label="item.optText"
+                        :value="item.optValue">
+                        </el-option>
+                    </el-select>
+                </div>
+
+                <div class="input-block">
+                    <label class="label-mini">是否属于大单:</label>
+                    <el-radio v-model="isBigOrder" label="1">是</el-radio>
+                    <el-radio v-model="isBigOrder" label="0">否</el-radio>
+                </div>
             </div>
-            <div class="input-block">
-                <label class="label-mini">客户备注:</label>
-                <el-input placeholder="请填写客户备注" class="input-with-select"
-                          v-model="remark" 
-                          size="mini">
-                </el-input>
+            
+            <div class="order-block">
+                <div class="input-block">
+                    <label class="label-mini">收货人:</label>
+                    <el-input placeholder="请选择收货人" class="input-with-select"
+                            v-model="selectedConsignee.name" 
+                            :disabled="true"
+                            size="mini">
+                        <el-button slot="append" icon="el-icon-search" @click="chooseCustomer()"></el-button>
+                    </el-input>
+                </div>
+
+                <div class="input-block">
+                    <label class="label-mini">是否选择发票:</label>
+                    <el-radio v-model="isInvoice" label="1">是</el-radio>
+                    <el-radio v-model="isInvoice" label="0">否</el-radio>
+                </div>
+
+                <div class="input-block" v-show="isInvoice == 1">
+                    <label class="label-mini">发票抬头:</label>
+                    <el-input placeholder="请选择发票" class="input-with-select"
+                            v-model="selectedConsignee.name" 
+                            :disabled="true"
+                            size="mini">
+                        <el-button slot="append" icon="el-icon-search" @click="chooseCustomer()"></el-button>
+                    </el-input>
+                </div>
             </div>
 
-             <div class="input-block">
-                <label class="label-mini">货款合计:</label>
-                <el-input placeholder="" class="input-with-select" disabled
-                          v-model="goodsTotalAmount" 
-                          size="mini">
-                </el-input>
-            </div>
+            <div class="order-block">
+                <div class="input-block">
+                    <label class="label-mini">客户备注:</label>
+                    <el-input placeholder="请填写客户备注" class="input-with-select"
+                            v-model="remark" 
+                            size="mini">
+                    </el-input>
+                </div>
 
-            <div class="input-block">
-                <label class="label-mini">邮资:</label>
-                <el-input placeholder="" class="input-with-select"
-                          v-model="freightAmount" 
-                          size="mini">
-                </el-input>
+                <div class="input-block">
+                    <label class="label-mini">客服备注:</label>
+                    <el-input placeholder="请填写客服备注" class="input-with-select"
+                            v-model="serviceRemark" 
+                            size="mini">
+                    </el-input>
+                </div>
             </div>
-
-             <div class="input-block">
-                <label class="label-mini">合计金额:</label>
-                <el-input placeholder="" class="input-with-select" disabled
-                          v-model="totalAmount" 
-                          size="mini">
-                </el-input>
-            </div>
+            
         </div>
         <div class="bottom-buttons">
-            <el-button type="primary" >保存</el-button>
+            <el-button type="primary" @click="submitOrder()">保存</el-button>
             <el-button type="info">重置</el-button>
         </div>
 
@@ -230,9 +294,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="item in goodsList" :key="item.id">
-                                        <td>
-                                            <input type="checkbox" v-model="checkedGoodsList" :value="item"> {{item.brandNameCn}}
+                                    <tr v-for="(item,index) in goodsList" :key="index">
+                                        <td :style="{paddingLeft:item.isMainGoods?'':'24px'}">
+                                            <input type="checkbox" 
+                                            v-model="checkedGoodsList" 
+                                            :value="item" 
+                                            v-if="item.isMainGoods"> {{item.brandNameCn}}
                                             </td>
                                         <td>{{item.buyNo}}</td>
                                         <td>{{item.model}}</td>
@@ -292,6 +359,7 @@ export default {
 
             //选择商品
             selectedGoodsList:[0,1,2,3,4,5,6,7],
+            selectedFormedList:[0,1,2,3,4,5,6,7],
             chooseGoodsVisible: false,
             buyNoSearch:'',
             modelSearch:'',
@@ -304,6 +372,12 @@ export default {
 
             //选择收货人
             selectedConsignee:{},
+
+            //订单信息
+            freightAmount:0,
+            isInvoice:'0',
+            isBigOrder:'0',
+            serviceRemark:'',
 
         }
     },
@@ -386,14 +460,14 @@ export default {
                 page:page?page-1:0,
                 size:size || 20,
             };
-      
-           let loadingInstance = Loading.service(that.loading);
+            
+            let loadingInstance = Loading.service(that.loading);
             return new Promise(function( resolve, reject){
                 that.axios.get('/emro_boss/orderbymanual/goodslist', {
                     params:data
                 }).then( (res)=> {
                     that.goodsCount = Number(res.data.count) ;
-                    that.goodsList = res.data.goodsList;
+                    that.goodsList = that.formGoodsData(res.data.goodsList);
                     that.$nextTick(() => {
                         loadingInstance.close();
                     });
@@ -408,6 +482,33 @@ export default {
             })
         },
 
+        //格式化数据
+        formGoodsData: function(list){
+            let formedData = [];
+            if(list.length>0){
+                list.forEach(element => {
+                    let indexNo = list.indexOf(element);
+                    if(element.id){
+                        element.childList =  element.childList?element.childList:[];
+                        element.isMainGoods = true;
+                        element.colSpan = element.childList.length;
+                        element.indexNo = indexNo;
+                        formedData.push(element);
+                        element.childList.forEach( child => {
+                            let itemChild = child;
+                            itemChild.isMainGoods = false;
+                            itemChild.indexNo = indexNo;
+                            formedData.push(itemChild)
+                            })
+                    } else {
+                        formedData.push(element)
+                    }
+                    
+                })
+            }
+            return formedData;
+        },
+
         //设置选择的商品
         setGoods: function(){
             let that = this;
@@ -415,37 +516,74 @@ export default {
                 alert('请选择商品');
                 return false;
             }
+
             that.checkedGoodsList.forEach(element=>{
                 let length = that.delList.length;
-                that.selectedGoodsList[length] = element;
+                that.$set(that.selectedGoodsList, length, element);
                 that.delList.push(element.id);
             });
+            that.selectedFormedList = that.formGoodsData(that.selectedGoodsList);
             that.chooseGoodsVisible = false;
         },
 
         //删除商品
         deleteGoods:function(index){
-             this.selectedGoodsList.splice(index, 1);
-             this.delList.splice(index, 1);
-             if(this.delList.length<8){
+            let that = this;
+             that.selectedGoodsList.splice(index, 1);
+             that.delList.splice(index, 1);
+             if(that.delList.length<8){
                  for (let i=0;i<8;i++){
-                    //  console.log(this.selectedGoodsList[i]);
-                     if(!this.selectedGoodsList[i] || !this.selectedGoodsList[i].id){
-                         this.selectedGoodsList[i] = i;
+                     if(!that.selectedGoodsList[i] || !that.selectedGoodsList[i].id){
+                         that.selectedGoodsList[i] = i;
                      }
                  }
              }
+             that.selectedFormedList = that.formGoodsData(that.selectedGoodsList);
+        },
+
+        //折扣发生变化
+        discountChange: function(item){
+            console.log(item);
+            item.saleUnitPrice = this.mul(item.discount, item.unitPrice);
+        },
+
+        //单价发生变化
+        saleUnitPrice: function(item){
+            item.discount = this.div(item.unitPrice, item.saleUnitPrice);
+        },
+
+        //提交表单
+        submitOrder: function(){
+            let test = this.validator.formValidStrategys.test;
+            console.log(test);
+        }
+    },
+
+    computed:{
+        goodsTotalAmount: function(){
+            let that = this;
+            let totalAmount = 0;
+            that.selectedGoodsList.forEach( element => {
+                if(element.id){
+                    totalAmount =this.add(totalAmount,  this.mul(element.num, element.saleUnitPrice));
+                }
+            })
+            return totalAmount;
+        },
+
+        totalAmount: function(){
+            return this.add(Number(this.freightAmount), Number(this.goodsTotalAmount))
         }
     },
 
     created:function(){
 
-//获取配置信息
-this.axios.get('/emro_boss/sysoptions/sysoptionslist/')
-.then( (res)=>{
-    this.storeList  = res.data.storeList;
-    this.sourceList  = res.data.sourceList
-})
+        //获取配置信息
+        this.axios.get('/emro_boss/sysoptions/sysoptionslist/')
+        .then( (res)=>{
+            this.storeList  = res.data.storeList;
+            this.sourceList  = res.data.sourceList
+        })
     },
 
     beforeRouteLeave(to, from, next){
@@ -464,6 +602,7 @@ this.axios.get('/emro_boss/sysoptions/sysoptionslist/')
 .order-block {
     display: flex;
     margin-top: 10px;
+    flex-wrap: wrap;
 }
 
 .customer-block {
@@ -502,23 +641,32 @@ this.axios.get('/emro_boss/sysoptions/sysoptionslist/')
     margin-top: 10px;
 }
 .selectedGoodsTable td {
-    height: 20px;
+    height: 24px;
 }
 
 .bottom-buttons {
     margin-top: 10px;
 }
-.goods-block .el-button {
+.goods-block .el-button, .customer-block .el-button {
     height: 26px;
     border-radius: 0 6px 6px 0;
     padding: 8px;
 }
 
-.store >>> .el-input__inner {
+.store >>> .el-input__inner, .cus-name >>> .el-input__inner {
     border-radius: 6px 0 0 6px !important;
 }
 
 .input-block label {
-    width: 100px;
+    width: auto;
+}
+
+.customer-block .el-input{
+    width:192px;
+}
+
+.sub-goods{
+    /* background-color: #DCDFE6; */
+    color: #C0C4CC
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div class="bread-crumb">
+    <div class="bread-crumb" v-show="breadCrumbList.length>0">
         <ul>
             <li v-for=" (item, index) in breadCrumbList" :key="item.title">
                 <router-link :to="item.path"

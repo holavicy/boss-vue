@@ -34,7 +34,12 @@
         </div>
         
         <div class="login-bottom">
-            <div>友情链接</div>
+            <div class="link">
+                <a>vipmro.net</a>
+                <a>vipmro.com</a>
+                <a>crm客户管理系统</a> 
+            </div>
+            <p>2019 © 苏州工品汇信息科技有限公司</p>
         </div>
     </div>
 </template>
@@ -150,10 +155,21 @@ export default {
     right: 0;
     bottom: 0;
     left:0;
-    box-shadow: 0px 10px 36px 0px rgba(6,31,61,0.12)
-
+    box-shadow: 0px 10px 36px 0px rgba(6,31,61,0.12);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
+.login-bottom a{
+    font-size: 15px;
+}
+.login-bottom p {
+    text-align: center;
+    font-size: 14px;
+    color: #aaaaaa;
+}
 .login-form {
     /* margin-top: -120px; */
     width: 360px;
@@ -222,5 +238,10 @@ button{
     bottom: 8px;
     color: red;
     font-size: 14px
+}
+
+.link {
+    text-align: center;
+    margin-top: 10px;
 }
 </style>

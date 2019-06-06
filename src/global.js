@@ -82,38 +82,6 @@ function div(arg1,arg2){
       return (r1/r2)*Math.pow(10,t2-t1);     
 }  
 
-//策略模式下的表单验证
-var validator = function(){}
-
-validator.prototype.formValidStrategys = {
-    //判空
-    isEmpty: function(value, errMsg){
-        if(value == ''){
-            return errMsg
-        }
-    },
-    //最小长度
-    minLength: function(value,length,errMsg){
-        if(value.length<length){
-            return errMsg
-        }
-    },
-    //最大长度
-    maxLength: function(value, length, errMsg) {
-        if(value.length>length) {
-            return errMsg
-        }
-    },
-    //固定长度
-    exactLength: function(value, length, errMsg){
-        if(value.length != length) {
-            return errMsg
-        }
-    },
-
-    test : '1'
-}
-
 export default{
     install: function(Vue){
         Vue.prototype.uploadFile = (url,payload,cancelToken,callback1) => uploadFile (url,payload,cancelToken,callback1);
@@ -122,6 +90,5 @@ export default{
         Vue.prototype.mul = (a,b) => mul (a,b);
         Vue.prototype.sub = (a,b) => sub (a,b);
         Vue.prototype.div = (a,b) => div (a,b);
-        Vue.prototype.validator = validator;
     }
 };

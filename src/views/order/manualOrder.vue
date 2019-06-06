@@ -325,6 +325,7 @@
 import PageList from '@/components/PageList'
 import { Promise } from 'q';
 import { Loading } from 'element-ui';
+import { Validator } from '@/validate.js';
 export default {
     name:'manual-order',
     components:{PageList},
@@ -543,7 +544,6 @@ export default {
 
         //折扣发生变化
         discountChange: function(item){
-            console.log(item);
             item.saleUnitPrice = this.mul(item.discount, item.unitPrice);
         },
 
@@ -554,9 +554,18 @@ export default {
 
         //提交表单
         submitOrder: function(){
-            let test = this.validator.formValidStrategys.test;
-            console.log(test);
-        }
+          const validator = new Validator();
+
+            validator.check(this.dealerName,[{strategy:'isEmpty',errMsg:'公司名称不能为空'},{strategy:'maxLength:6',errMsg:'公司名称最多6个字符'}]);
+            validator.check(this.payAccount,[{strategy:'isEmpty',errMsg:'付款户名不能为空'},{strategy:'maxLength:10',errMsg:'付款户名最多10个字符'}]);
+            let errMsg =  validator.checkResult();
+
+            if(errMsg) {
+                alert(errMsg);
+                return
+            }
+            },
+   
     },
 
     computed:{

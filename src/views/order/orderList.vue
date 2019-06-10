@@ -405,6 +405,8 @@ export default {
      },
     methods:{
         getList: function(page,size){
+            this.pagingPage = page || 1;
+            
             this.showLoading();
             //封装查询条件
            let data = {
@@ -428,7 +430,7 @@ export default {
                isHaveReceipt: this.selectHasInvoice,
                page: page?page-1:0,
                rows:size?size:20,
-           }
+           };
             this.axios.get('/emro_boss/order/getOrder', {params:data})
             .then((res) => {
                 this.totalCount = res.data.total;

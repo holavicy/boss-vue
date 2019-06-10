@@ -282,6 +282,12 @@ export default {
         //获取客户列表数据
         getCustomerList:function(data){
             let that = this;
+
+            if(data) {
+                that.pagingPage = data.page+1
+            } else {
+                that.pagingPage = 1;
+            }
             let loadingInstance = Loading.service(that.loading);
        
             return new Promise(function(resolve, reject){
@@ -307,7 +313,6 @@ export default {
 
         //设置已选客户
         setCustomer:function(item){
-            //item 不能为空 
             if(!item.dealerId) {
                 alert('请选择客户');
                 return
@@ -328,7 +333,6 @@ export default {
         //获取商品列表数据
         getGoodsList: function(data){
             let that = this;
-
             let requestData = data;
             if(!requestData) {
                 requestData = {
@@ -336,10 +340,10 @@ export default {
                     size:20
                 }
             }
-
             requestData.channel=this.orderStore;
             requestData.delList=this.delList.join(',');
-
+            
+            that.pagingPageGoods = requestData.page+1;
             let loadingInstance = Loading.service(that.loading);
             return new Promise(function( resolve, reject){
                 that.axios.get('/emro_boss/orderbymanual/goodslist', {
@@ -536,6 +540,8 @@ export default {
 
 .bottom-buttons {
     margin-top: 10px;
+    display: flex;
+    justify-content: center;
 }
 .goods-block .el-button, .customer-block .el-button {
     height: 26px;

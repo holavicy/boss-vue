@@ -21,7 +21,7 @@
                         <el-input size="mini" v-model="titleSearch"></el-input>
                     </div>
                     <div class="input-block">
-                        <el-button type="primary" @click="getGoodsList">搜索</el-button>
+                        <el-button type="primary" @click="getGoodsList()">搜索</el-button>
                     </div>
                 </div>
                 

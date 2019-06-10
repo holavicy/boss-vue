@@ -55,6 +55,7 @@
                     <td>{{item.brandNameCn}}</td>
                     <td>{{item.series}}</td>
                     <td style="text-align:center">{{item.measure}}</td>
+                     <!--商品数量-->
                     <td style="width:100px;text-align:center">
                         <input type="text" style="width:100%;text-align:center" 
                         oninput="value=value.replace(/[^\d]/g,'')"
@@ -62,7 +63,7 @@
                         v-model="item.num"/>
                         <span v-show="item.id && !item.isMainGoods">{{item.num}}</span>
                     </td>
-                    <!--商品数量-->
+                   <!--库存-->
                     <td style="text-align:center">
                         <span  v-show="item.storesCnt==0">{{item.stock}}</span>
                          <select v-model="item.stockSelId" v-show="item.storesCnt&&item.storesCnt!=0">
@@ -75,7 +76,10 @@
                     <td style="width:140px;text-align:center">
                         <input type="text" style="width:100%;text-align:center" 
                                 v-show="item.id && item.isMainGoods" 
-                                v-model="item.discount" @keyup="discountChange(item)"/>
+                                v-model="item.discount"
+                                oninput="value=value.replace(/[^\d|.]/g,'')"
+                                @keydown="inputFixed(item.discount)"
+                                @keyup="discountChange(item)"/>
                         <span v-show="item.id && !item.isMainGoods">{{item.discount}}</span>
                     </td>
                     <!--商品单价-->
@@ -83,10 +87,12 @@
                         <input type="text" style="width:100%;text-align:center" 
                                 v-show="item.id && item.isMainGoods" 
                                 v-model="item.saleUnitPrice" 
+                                 @keydown="inputFixed(item.saleUnitPrice)"
                                 @keyup="saleUnitPrice(item)"/>
                         <span v-show="item.id && !item.isMainGoods">{{item.saleUnitPrice}}</span>
                     </td>
-                    <td style="text-align:center">{{item.id?item.num*item.saleUnitPrice || 0:''}}</td>
+                    <td style="text-align:center" v-show="!item.id"></td>
+                    <td style="text-align:center" v-show="item.id">{{item.num*item.saleUnitPrice|toFixed(2)}}</td>
                     <td style="text-align:center"><a v-show="item.id && item.isMainGoods" @click="deleteGoods(item.indexNo)">删除</a></td>
                 </tr>
             </tbody>
@@ -425,9 +431,14 @@ export default {
              that.selectedFormedList = that.formGoodsData(that.selectedGoodsList);
         },
 
+        inputFixed:function(value){
+            if(value.slice(value.indexOf('.') + 1).length>=2){
+                value=value.slice(0, -1);
+            }
+        },
         //折扣发生变化
         discountChange: function(item){
-            item.saleUnitPrice = this.mul(item.discount, item.unitPrice);
+            item.saleUnitPrice = this.mul(item.discount, item.unitPrice).toFixed(2);
         },
 
         //单价发生变化

@@ -20,4 +20,10 @@ let date = (value) => {
     return result
 }
 
-export { date}
+let toFixed = (value, num)=>{
+    if (value){
+        return parseFloat(value).toFixed(num)
+    } else return 0
+}
+
+export { date, toFixed}

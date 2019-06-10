@@ -192,143 +192,37 @@
             <el-button type="info">重置</el-button>
         </div>
 
-        <!--选择客户弹框-->
-        <el-dialog
-            title="选择客户"
-            :visible.sync="chooseCustomerVisible"
-            width="50%">
-            
-            <page-list :totalCount="customerCount"
-                        :pagingPage="pagingPage"
-                        @getList="getCustomerList">
-                <template v-slot:searchContiditions>
-                    <div style="display:flex">
-                        <div class="input-block">
-                            <label class="label-mini">公司名称:</label>
-                            <el-input size="mini" v-model="nameSearch"></el-input>
-                        </div>
-                        <div class="input-block">
-                            <label class="label-mini">联系人:</label>
-                            <el-input size="mini" v-model="linkmanSearch"></el-input>
-                        </div>
-                        <div class="input-block">
-                            <label class="label-mini">电话:</label>
-                            <el-input size="mini" v-model="mobileSearch"></el-input>
-                        </div>
-                        <div class="input-block">
-                            <el-button type="primary" @click="getCustomerList()">搜索</el-button>
-                        </div>
-                    </div>
-                    
-                </template>
-                    <template v-slot:tableBlock>
-                        <div class="table-block">
-                            <table class="table table-border table-nowrap table-hover table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>联系人</th>
-                                        <th>公司名称</th>
-                                        <th>电话</th>
-                                        <th>客户专员</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="item in customerList" :key="item.id">
-                                        <td><el-radio v-model="selectedCusId" :label="item.id">{{item.linkMan}}</el-radio></td>
-                                        <td>{{item.name}}</td>
-                                        <td>{{item.mobile}}</td>
-                                        <td>{{item.customerManagerName}}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                </template>
-            </page-list>
-            
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="chooseCustomerVisible = false">取消</el-button>
-                <el-button type="primary" @click="setCustomer()">确定</el-button>
-            </span>
-        </el-dialog>
+        <!--选择客户-->
+        <select-customer :chooseCustomerVisible.sync="chooseCustomerVisible"
+            :customerCount="customerCount" 
+            :pagingPage="pagingPage" 
+            :customerList="customerList"
+            @get-customer-list="getCustomerList"
+            @set-customer="setCustomer"></select-customer>
 
         <!--选择商品弹框-->
-        <el-dialog
-            title="选择商品"
-            :visible.sync="chooseGoodsVisible"
-            width="50%">
-            
-            <page-list :totalCount="goodsCount"
-                        :pagingPage="pagingPageGoods"
-                        @getList="getGoodsList">
-                <template v-slot:searchContiditions>
-                    <div style="display:flex">
-                        <div class="input-block">
-                            <label class="label-mini">订货号:</label>
-                            <el-input size="mini" v-model="buyNoSearch"></el-input>
-                        </div>
-                        <div class="input-block">
-                            <label class="label-mini">型号:</label>
-                            <el-input size="mini" v-model="modelSearch"></el-input>
-                        </div>
-                        <div class="input-block">
-                            <label class="label-mini">名称/品牌:</label>
-                            <el-input size="mini" v-model="titleSearch"></el-input>
-                        </div>
-                        <div class="input-block">
-                            <el-button type="primary" @click="getGoodsList()">搜索</el-button>
-                        </div>
-                    </div>
-                    
-                </template>
-                    <template v-slot:tableBlock>
-                        <div class="table-block">
-                            <table class="table table-border table-nowrap table-hover table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>品牌</th>
-                                        <th>订货号</th>
-                                        <th>型号</th>
-                                        <th>名称</th>
-                                        <th>单位</th>
-                                        <th>类别</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(item,index) in goodsList" :key="index">
-                                        <td :style="{paddingLeft:item.isMainGoods?'':'24px'}">
-                                            <input type="checkbox" 
-                                            v-model="checkedGoodsList" 
-                                            :value="item" 
-                                            v-if="item.isMainGoods"> {{item.brandNameCn}}
-                                            </td>
-                                        <td>{{item.buyNo}}</td>
-                                        <td>{{item.model}}</td>
-                                        <td>{{item.title}}</td>
-                                        <td style="text-align:center">{{item.measure}}</td>
-                                        <td style="text-align:center">{{item.cateName}}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                </template>
-            </page-list>
-            
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="chooseGoodsVisible = false">取消</el-button>
-                <el-button type="primary" @click="setGoods()">确定</el-button>
-            </span>
-        </el-dialog>
+        <select-goods :chooseGoodsVisible.sync="chooseGoodsVisible"
+            :goodsCount="goodsCount"
+            :pagingPageGoods="pagingPageGoods"
+            :goodsList="goodsList"
+            @get-goods-list="getGoodsList"
+            @set-goods="setGoods"></select-goods>
+
     </div>
 </template>
 
 <script>
 import PageList from '@/components/PageList'
+import SelectCustomer from '@/components/SelectCustomer'
+import SelectGoods from '@/components/SelectGoods'
+
 import { Promise } from 'q';
 import { Loading } from 'element-ui';
 import { Validator } from '@/validate.js';
+
 export default {
     name:'manual-order',
-    components:{PageList},
+    components:{PageList, SelectCustomer, SelectGoods},
     data(){
         return{
             storeList:[],
@@ -337,7 +231,6 @@ export default {
             orderSource:'',
             dealerId:'',
             remark:'',
-            test:true,
 
             loading: {
                 lock: true,
@@ -352,10 +245,6 @@ export default {
             customerList:[],
             customerCount:0,
             pagingPage:1,
-            nameSearch:'',
-            linkmanSearch:'',
-            mobileSearch:'',
-            selectedCusId:'',
             selectedCus: {},
 
             //选择商品
@@ -387,26 +276,16 @@ export default {
         chooseCustomer:function(){
             this.getCustomerList().then( ()=> {
                 this.chooseCustomerVisible = true;
-            }).catch(()=>{
-                alert('获取客户信息失败')
             });
         },
 
         //获取客户列表数据
-        getCustomerList:function(page,size){
-    
+        getCustomerList:function(data){
             let that = this;
-    
-           let loadingInstance = Loading.service(that.loading);
-            let data ={
-                linkMan:that.linkmanSearch,
-                name:that.nameSearch,
-                mobile:that.mobileSearch,
-                page:page?page-1:0,
-                rows:size || 20,
-            }
+            let loadingInstance = Loading.service(that.loading);
+       
             return new Promise(function(resolve, reject){
-                that.axios.get('/emro_boss/orderbymanual/newcustomerlist', {params:data})
+                that.axios.get('/emro_boss/orderbymanual/newcustomerlist', {params:data || {page:0,rows:20}})
                 .then( (res) => {
                     
                     that.customerList = res.data.crmcList;
@@ -416,8 +295,8 @@ export default {
                         loadingInstance.close();
                     });
                     })
-                    .catch((rej)=>{
-                        reject(rej);
+                    .catch(()=>{
+                        alert('获取客户信息失败')
                         that.$nextTick(() => {
                             loadingInstance.close();
                         });
@@ -427,14 +306,15 @@ export default {
         },
 
         //设置已选客户
-        setCustomer:function(){
-            console.log(this.selectedCusId);
-            this.customerList.forEach(element => {
-                if (element.id == this.selectedCusId) {
-                    this.selectedCus = element;
-                }
-                
-            });
+        setCustomer:function(item){
+            //item 不能为空 
+            if(!item.dealerId) {
+                alert('请选择客户');
+                return
+            }
+
+            this.selectedCus = item;
+            this.dealerId = this.selectedCus.dealerId;
             this.chooseCustomerVisible = false;
         },
 
@@ -443,29 +323,27 @@ export default {
             this.getGoodsList().then(()=>{
                 this.chooseGoodsVisible = true;
             })
-            .catch(()=>{
-                alert('获取商品数据失败')
-            })
         },
 
         //获取商品列表数据
-        getGoodsList: function(page, size){
+        getGoodsList: function(data){
             let that = this;
-            that.checkedGoodsList = [];
-            let data = {
-                title: this.titleSearch,
-                buyNo:this.buyNoSearch,
-                model:this.modelSearch,
-                channel:this.orderStore,
-                delList:this.delList.join(','),
-                page:page?page-1:0,
-                size:size || 20,
-            };
-            
+
+            let requestData = data;
+            if(!requestData) {
+                requestData = {
+                    page:0,
+                    size:20
+                }
+            }
+
+            requestData.channel=this.orderStore;
+            requestData.delList=this.delList.join(',');
+
             let loadingInstance = Loading.service(that.loading);
             return new Promise(function( resolve, reject){
                 that.axios.get('/emro_boss/orderbymanual/goodslist', {
-                    params:data
+                    params:requestData
                 }).then( (res)=> {
                     that.goodsCount = Number(res.data.count) ;
                     that.goodsList = that.formGoodsData(res.data.goodsList);
@@ -478,7 +356,7 @@ export default {
                     that.$nextTick(() => {
                         loadingInstance.close();
                     });
-                    reject();
+                   alert('获取商品数据失败')
                 })
             })
         },
@@ -511,14 +389,15 @@ export default {
         },
 
         //设置选择的商品
-        setGoods: function(){
+        setGoods: function(list){
             let that = this;
-            if( that.checkedGoodsList.length == 0 ){
+   
+            if( list.length == 0 ){
                 alert('请选择商品');
                 return false;
             }
 
-            that.checkedGoodsList.forEach(element=>{
+            list.forEach(element=>{
                 let length = that.delList.length;
                 that.$set(that.selectedGoodsList, length, element);
                 that.delList.push(element.id);
@@ -556,15 +435,17 @@ export default {
         submitOrder: function(){
           const validator = new Validator();
 
-            validator.check(this.dealerName,[{strategy:'isEmpty',errMsg:'公司名称不能为空'},{strategy:'maxLength:6',errMsg:'公司名称最多6个字符'}]);
-            validator.check(this.payAccount,[{strategy:'isEmpty',errMsg:'付款户名不能为空'},{strategy:'maxLength:10',errMsg:'付款户名最多10个字符'}]);
+            validator.check(this.dealerId,[{strategy:'isEmpty',errMsg:'请选择客户'}]);
+            validator.check(this.orderStore,[{strategy:'isEmpty',errMsg:'请选择店铺'}]);
+            validator.check(this.delList,[{strategy:'isEmpty',errMsg:'请选择商品'}]);
+            // validator.check(this.orderStore,[{strategy:'isEmpty',errMsg:'请选择店铺'}]);
             let errMsg =  validator.checkResult();
 
             if(errMsg) {
                 alert(errMsg);
                 return
             }
-            },
+        },
    
     },
 

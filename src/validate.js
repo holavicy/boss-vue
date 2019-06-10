@@ -3,9 +3,35 @@ class Validator{
 
     strategys = {
         isEmpty: function(value, errMsg){
-            if(!value){
-                return errMsg
-            }
+
+            // 过滤null和undefined
+            if (!value) return errMsg;
+            let type = Object.prototype.toString.call(value);
+          
+            let result = true;
+            switch (type) {
+                case '[object String]':
+                    if(value.trim() === ''){
+                        result = false;
+                    }
+                    break;
+                case '[object Array]':
+                    if(value.length === 0) {
+                        result = false;
+                    }
+                    break;
+                case '[object Object]':
+                    if(Object.keys(value).length === 0) {
+                        result = false;
+                    }
+                    break;
+                default:
+                    result = true;
+                }
+
+                if(!result){
+                    return errMsg
+                }
         },
 
         maxLength: function(value, length, errMsg){

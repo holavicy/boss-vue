@@ -1,5 +1,14 @@
 import axios from 'axios'
 
+//配置常量
+const loading = {
+    lock: true,
+    text: '加载中',
+    spinner: 'el-icon-loading',
+    background: 'rgba(0, 0, 0, 0.7)',
+    customClass:'top-mask'
+}
+
 //上传文件并显示上传进度
 function uploadFile (url,payload,cancelToken,callback1) {
     return new Promise(function(resolve,reject){
@@ -84,6 +93,7 @@ function div(arg1,arg2){
 
 export default{
     install: function(Vue){
+        Vue.prototype.loading = loading;
         Vue.prototype.uploadFile = (url,payload,cancelToken,callback1) => uploadFile (url,payload,cancelToken,callback1);
         Vue.prototype.getAllCategory = () => getAllCategory ();
         Vue.prototype.add = (a,b) => add (a,b);

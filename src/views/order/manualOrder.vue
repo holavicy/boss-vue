@@ -18,11 +18,14 @@
         <div class="goods-block">
             <div class="input-block">
                 <label class="label-mini">店铺:</label>
-                <el-select class="store" v-model="orderStore" :disabled="!!orderStore"  placeholder="请选择" size="mini">
+                <el-select class="store" placeholder="请选择"
+                    v-model="orderStore" 
+                    :disabled="!!orderStore"
+                    size="mini">
                     <el-option v-for="item in storeList"  
-                    :key="item.id"
-                    :label="item.optText"
-                    :value="item.optValue">
+                        :key="item.id"
+                        :label="item.optText"
+                        :value="item.optValue">
                     </el-option>
                 </el-select>
                  <el-button type="primary" :disabled="!orderStore" @click="chooseGoods()">选择商品</el-button>
@@ -48,7 +51,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item,index) in selectedFormedList" :key="index" :class="[item.isMainGoods || !item.id?'':'sub-goods']">
+                <tr v-for="(item,index) in selectedFormedList" 
+                    :key="index" 
+                    :class="[item.isMainGoods || !item.id?'':'sub-goods']">
                     <td>{{item.title}}</td>
                     <td>{{item.buyNo}}</td>
                     <td>{{item.model}}</td>
@@ -58,15 +63,16 @@
                      <!--商品数量-->
                     <td style="width:100px;text-align:center">
                         <input type="text" style="width:100%;text-align:center" 
-                        oninput="value=value.replace(/[^\d]/g,'')"
-                        v-show="item.id && item.isMainGoods" 
-                        v-model="item.num"/>
+                            oninput="value=value.replace(/[^\d]/g,'')"
+                            v-show="item.id && item.isMainGoods" 
+                            v-model="item.num"/>
                         <span v-show="item.id && !item.isMainGoods">{{item.num}}</span>
                     </td>
                    <!--库存-->
                     <td style="text-align:center">
                         <span  v-show="item.storesCnt==0">{{item.stock}}</span>
-                         <select v-model="item.stockSelId" v-show="item.storesCnt&&item.storesCnt!=0">
+                        <select v-model="item.stockSelId" 
+                            v-show="item.storesCnt && item.storesCnt!=0">
                             <option v-for="i in item.dealerStoreList" :key="i.dealerStoreId" :value="i.dealerStoreId">{{i.storeNm}}</option>
                         </select>
                     </td>
@@ -75,25 +81,28 @@
                     <!--商品折扣-->
                     <td style="width:140px;text-align:center">
                         <input type="text" style="width:100%;text-align:center" 
-                                v-show="item.id && item.isMainGoods" 
-                                v-model="item.discount"
-                                oninput="value=value.replace(/[^\d|.]/g,'')"
-                                @keydown="inputFixed(item.discount)"
-                                @keyup="discountChange(item)"/>
+                            v-show="item.id && item.isMainGoods" 
+                            v-model="item.discount"
+                            oninput="value=value.replace(/[^\d|.]/g,'')"
+                            @keydown="inputFixed(item.discount)"
+                            @keyup="discountChange(item)"/>
                         <span v-show="item.id && !item.isMainGoods">{{item.discount}}</span>
                     </td>
                     <!--商品单价-->
                     <td style="width:140px;text-align:center">
                         <input type="text" style="width:100%;text-align:center" 
-                                v-show="item.id && item.isMainGoods" 
-                                v-model="item.saleUnitPrice" 
-                                 @keydown="inputFixed(item.saleUnitPrice)"
-                                @keyup="saleUnitPrice(item)"/>
+                            v-show="item.id && item.isMainGoods" 
+                            v-model="item.saleUnitPrice" 
+                            oninput="value=value.replace(/[^\d|.]/g,'')"
+                            @keyup="saleUnitPrice(item)"/>
                         <span v-show="item.id && !item.isMainGoods">{{item.saleUnitPrice}}</span>
                     </td>
                     <td style="text-align:center" v-show="!item.id"></td>
                     <td style="text-align:center" v-show="item.id">{{item.num*item.saleUnitPrice|toFixed(2)}}</td>
-                    <td style="text-align:center"><a v-show="item.id && item.isMainGoods" @click="deleteGoods(item.indexNo)">删除</a></td>
+                    <td style="text-align:center">
+                        <a v-show="item.id && item.isMainGoods" 
+                            @click="deleteGoods(item.indexNo)">删除</a>
+                    </td>
                 </tr>
             </tbody>
             </table>
@@ -104,25 +113,25 @@
             <div class="order-block">
                 <div class="input-block">
                     <label class="label-mini">货款合计:</label>
-                    <el-input placeholder="" class="input-with-select" disabled
-                            v-model="goodsTotalAmount" 
-                            size="mini">
+                    <el-input class="input-with-select" disabled
+                        v-model="goodsTotalAmount" 
+                        size="mini">
                     </el-input>
                 </div>
 
                 <div class="input-block">
                     <label class="label-mini">邮资:</label>
-                    <el-input placeholder="" class="input-with-select"
-                            v-model="freightAmount" 
-                            size="mini">
+                    <el-input class="input-with-select"
+                        v-model="freightAmount" 
+                        size="mini">
                     </el-input>
                 </div>
 
                 <div class="input-block">
                     <label class="label-mini">合计金额:</label>
-                    <el-input placeholder="" class="input-with-select" disabled
-                            v-model="totalAmount" 
-                            size="mini">
+                    <el-input class="input-with-select" disabled
+                        v-model="totalAmount" 
+                        size="mini">
                     </el-input>
                 </div>
             </div>
@@ -130,11 +139,13 @@
             <div class="order-block">
                 <div class="input-block">
                     <label class="label-mini">订单来源:</label>
-                    <el-select v-model="orderSource" placeholder="请选择" size="mini">
+                    <el-select placeholder="请选择"
+                        v-model="orderSource"
+                        size="mini">
                         <el-option v-for="item in sourceList" 
-                        :key="item.id"
-                        :label="item.optText"
-                        :value="item.optValue">
+                            :key="item.id"
+                            :label="item.optText"
+                            :value="item.optValue">
                         </el-option>
                     </el-select>
                 </div>
@@ -150,10 +161,11 @@
                 <div class="input-block">
                     <label class="label-mini">收货人:</label>
                     <el-input placeholder="请选择收货人" class="input-with-select"
-                            v-model="selectedConsignee.name" 
-                            :disabled="true"
-                            size="mini">
-                        <el-button slot="append" icon="el-icon-search" @click="chooseCustomer()"></el-button>
+                        v-model="selectedConsignee.name" 
+                        :disabled="true"
+                        size="mini">
+                        <el-button slot="append" icon="el-icon-search" 
+                            @click="chooseConsignee()"></el-button>
                     </el-input>
                 </div>
 
@@ -166,9 +178,9 @@
                 <div class="input-block" v-show="isInvoice == 1">
                     <label class="label-mini">发票抬头:</label>
                     <el-input placeholder="请选择发票" class="input-with-select"
-                            v-model="selectedConsignee.name" 
-                            :disabled="true"
-                            size="mini">
+                        v-model="selectedConsignee.name" 
+                        :disabled="true"
+                        size="mini">
                         <el-button slot="append" icon="el-icon-search" @click="chooseCustomer()"></el-button>
                     </el-input>
                 </div>
@@ -178,21 +190,23 @@
                 <div class="input-block">
                     <label class="label-mini">客户备注:</label>
                     <el-input placeholder="请填写客户备注" class="input-with-select"
-                            v-model="remark" 
-                            size="mini">
+                        v-model="remark" 
+                        size="mini">
                     </el-input>
                 </div>
 
                 <div class="input-block">
                     <label class="label-mini">客服备注:</label>
                     <el-input placeholder="请填写客服备注" class="input-with-select"
-                            v-model="serviceRemark" 
-                            size="mini">
+                        v-model="serviceRemark" 
+                        size="mini">
                     </el-input>
                 </div>
             </div>
             
         </div>
+
+        <!--表单提交-->
         <div class="bottom-buttons">
             <el-button type="primary" @click="submitOrder()">保存</el-button>
             <el-button type="info">重置</el-button>
@@ -218,33 +232,23 @@
 </template>
 
 <script>
-import PageList from '@/components/PageList'
 import SelectCustomer from '@/components/SelectCustomer'
 import SelectGoods from '@/components/SelectGoods'
 
 import { Promise } from 'q';
-import { Loading } from 'element-ui';
 import { Validator } from '@/validate.js';
 
 export default {
     name:'manual-order',
-    components:{PageList, SelectCustomer, SelectGoods},
+    components:{SelectCustomer, SelectGoods},
     data(){
         return{
-            storeList:[],
-            sourceList:[],
+            dealerId:'',
             orderStore:'',
             orderSource:'',
-            dealerId:'',
+            storeList:[],
+            sourceList:[],
             remark:'',
-
-            loading: {
-                lock: true,
-                text: '加载中',
-                spinner: 'el-icon-loading',
-                background: 'rgba(0, 0, 0, 0.7)',
-                customClass:'top-mask'
-            },
 
             //选择客户弹框
             chooseCustomerVisible:false,
@@ -296,7 +300,7 @@ export default {
             }
             let loadingInstance = Loading.service(that.loading);
        
-            return new Promise(function(resolve, reject){
+            return new Promise(function(resolve){
                 that.axios.get('/emro_boss/orderbymanual/newcustomerlist', {params:data || {page:0,rows:20}})
                 .then( (res) => {
                     
@@ -351,7 +355,7 @@ export default {
             
             that.pagingPageGoods = requestData.page+1;
             let loadingInstance = Loading.service(that.loading);
-            return new Promise(function( resolve, reject){
+            return new Promise(function( resolve){
                 that.axios.get('/emro_boss/orderbymanual/goodslist', {
                     params:requestData
                 }).then( (res)=> {
@@ -573,7 +577,6 @@ export default {
 }
 
 .sub-goods{
-    /* background-color: #DCDFE6; */
     color: #C0C4CC
 }
 </style>

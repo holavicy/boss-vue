@@ -14,7 +14,7 @@
             </div>
         </div>
 
-        <!--订单商品信息-->
+        <!--商品信息-->
         <div class="goods-block">
             <div class="input-block">
                 <label class="label-mini">店铺:</label>
@@ -30,82 +30,7 @@
                 </el-select>
                  <el-button type="primary" :disabled="!orderStore" @click="chooseGoods()">选择商品</el-button>
             </div>
-           
-            <table class="table table-border table-nowrap selectedGoodsTable">
-            <thead>
-                <tr>
-                    <th>品名</th>
-                    <th>订货号</th>
-                    <th>型号</th>
-                    <th>品牌</th>
-                    <th>系列</th>
-                    <th>单位</th>
-                    <th>数量</th>
-                    <th>库存</th>
-                    <th>券后价</th>
-                    <th>面价</th>
-                    <th>折扣</th>
-                    <th>单价</th>
-                    <th>金额(元)</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(item,index) in selectedFormedList" 
-                    :key="index" 
-                    :class="[item.isMainGoods || !item.id?'':'sub-goods']">
-                    <td>{{item.title}}</td>
-                    <td>{{item.buyNo}}</td>
-                    <td>{{item.model}}</td>
-                    <td>{{item.brandNameCn}}</td>
-                    <td>{{item.series}}</td>
-                    <td style="text-align:center">{{item.measure}}</td>
-                     <!--商品数量-->
-                    <td style="width:100px;text-align:center">
-                        <input type="text" style="width:100%;text-align:center" 
-                            oninput="value=value.replace(/[^\d]/g,'')"
-                            v-show="item.id && item.isMainGoods" 
-                            v-model="item.num"/>
-                        <span v-show="item.id && !item.isMainGoods">{{item.num}}</span>
-                    </td>
-                   <!--库存-->
-                    <td style="text-align:center">
-                        <span  v-show="item.storesCnt==0">{{item.stock}}</span>
-                        <select v-model="item.stockSelId" 
-                            v-show="item.storesCnt && item.storesCnt!=0">
-                            <option v-for="i in item.dealerStoreList" :key="i.dealerStoreId" :value="i.dealerStoreId">{{i.storeNm}}</option>
-                        </select>
-                    </td>
-                    <td style="text-align:center">{{item.couponPrice}}</td>
-                    <td style="text-align:center">{{item.unitPrice}}</td>
-                    <!--商品折扣-->
-                    <td style="width:140px;text-align:center">
-                        <input type="text" style="width:100%;text-align:center" 
-                            v-show="item.id && item.isMainGoods" 
-                            v-model="item.discount"
-                            oninput="value=value.replace(/[^\d|.]/g,'')"
-                            @keydown="inputFixed(item.discount)"
-                            @keyup="discountChange(item)"/>
-                        <span v-show="item.id && !item.isMainGoods">{{item.discount}}</span>
-                    </td>
-                    <!--商品单价-->
-                    <td style="width:140px;text-align:center">
-                        <input type="text" style="width:100%;text-align:center" 
-                            v-show="item.id && item.isMainGoods" 
-                            v-model="item.saleUnitPrice" 
-                            oninput="value=value.replace(/[^\d|.]/g,'')"
-                            @keyup="saleUnitPrice(item)"/>
-                        <span v-show="item.id && !item.isMainGoods">{{item.saleUnitPrice}}</span>
-                    </td>
-                    <td style="text-align:center" v-show="!item.id"></td>
-                    <td style="text-align:center" v-show="item.id">{{item.num*item.saleUnitPrice|toFixed(2)}}</td>
-                    <td style="text-align:center">
-                        <a v-show="item.id && item.isMainGoods" 
-                            @click="deleteGoods(item.indexNo)">删除</a>
-                    </td>
-                </tr>
-            </tbody>
-            </table>
+            <manual-goods :selectedGoodsList.sync="selectedGoodsList"></manual-goods>
         </div>
 
         <!--订单信息-->
@@ -234,13 +159,15 @@
 <script>
 import SelectCustomer from '@/components/SelectCustomer'
 import SelectGoods from '@/components/SelectGoods'
+import ManualGoods from '@/components/order/ManualGoods'
 
+import { Loading } from 'element-ui';
 import { Promise } from 'q';
 import { Validator } from '@/validate.js';
 
 export default {
     name:'manual-order',
-    components:{SelectCustomer, SelectGoods},
+    components:{SelectCustomer, SelectGoods, ManualGoods},
     data(){
         return{
             dealerId:'',
@@ -259,7 +186,7 @@ export default {
 
             //选择商品
             selectedGoodsList:[0,1,2,3,4,5,6,7],
-            selectedFormedList:[0,1,2,3,4,5,6,7],
+            formattedGoodsList:[0,1,2,3,4,5,6,7],
             chooseGoodsVisible: false,
             buyNoSearch:'',
             modelSearch:'',
@@ -337,6 +264,8 @@ export default {
         chooseGoods:function(){
             this.getGoodsList().then(()=>{
                 this.chooseGoodsVisible = true;
+            }).catch(()=>{
+                alert('?')
             })
         },
 
@@ -350,8 +279,8 @@ export default {
                     size:20
                 }
             }
-            requestData.channel=this.orderStore;
-            requestData.delList=this.delList.join(',');
+            requestData.channel=that.orderStore;
+            requestData.delList=that.delList.join(',');
             
             that.pagingPageGoods = requestData.page+1;
             let loadingInstance = Loading.service(that.loading);
@@ -359,8 +288,9 @@ export default {
                 that.axios.get('/emro_boss/orderbymanual/goodslist', {
                     params:requestData
                 }).then( (res)=> {
-                    that.goodsCount = Number(res.data.count) ;
-                    that.goodsList = that.formGoodsData(res.data.goodsList);
+                    let list = res.data.goodsList
+                    that.goodsCount = Number(res.data.count);
+                    that.goodsList = that.formatGoodsList(list);
                     that.$nextTick(() => {
                         loadingInstance.close();
                     });
@@ -373,33 +303,6 @@ export default {
                    alert('获取商品数据失败')
                 })
             })
-        },
-
-        //格式化数据
-        formGoodsData: function(list){
-            let formedData = [];
-            if(list.length>0){
-                list.forEach(element => {
-                    let indexNo = list.indexOf(element);
-                    if(element.id){
-                        element.childList =  element.childList?element.childList:[];
-                        element.isMainGoods = true;
-                        element.colSpan = element.childList.length;
-                        element.indexNo = indexNo;
-                        formedData.push(element);
-                        element.childList.forEach( child => {
-                            let itemChild = child;
-                            itemChild.isMainGoods = false;
-                            itemChild.indexNo = indexNo;
-                            formedData.push(itemChild)
-                            })
-                    } else {
-                        formedData.push(element)
-                    }
-                    
-                })
-            }
-            return formedData;
         },
 
         //设置选择的商品
@@ -416,38 +319,8 @@ export default {
                 that.$set(that.selectedGoodsList, length, element);
                 that.delList.push(element.id);
             });
-            that.selectedFormedList = that.formGoodsData(that.selectedGoodsList);
+            that.formattedGoodsList = that.formGoodsData(that.selectedGoodsList);
             that.chooseGoodsVisible = false;
-        },
-
-        //删除商品
-        deleteGoods:function(index){
-            let that = this;
-             that.selectedGoodsList.splice(index, 1);
-             that.delList.splice(index, 1);
-             if(that.delList.length<8){
-                 for (let i=0;i<8;i++){
-                     if(!that.selectedGoodsList[i] || !that.selectedGoodsList[i].id){
-                         that.selectedGoodsList[i] = i;
-                     }
-                 }
-             }
-             that.selectedFormedList = that.formGoodsData(that.selectedGoodsList);
-        },
-
-        inputFixed:function(value){
-            if(value.slice(value.indexOf('.') + 1).length>=2){
-                value=value.slice(0, -1);
-            }
-        },
-        //折扣发生变化
-        discountChange: function(item){
-            item.saleUnitPrice = this.mul(item.discount, item.unitPrice).toFixed(2);
-        },
-
-        //单价发生变化
-        saleUnitPrice: function(item){
-            item.discount = this.div(item.unitPrice, item.saleUnitPrice);
         },
 
         //提交表单
@@ -531,10 +404,6 @@ export default {
     width: 100%;
 }
 
-.el-dialog__body {
-    box-sizing: border-box;
-}
-
 .el-button {
     line-height: 0;
 }
@@ -545,12 +414,6 @@ export default {
 
 .goods-block {
     margin-top: 10px;
-}
-.selectedGoodsTable{
-    margin-top: 10px;
-}
-.selectedGoodsTable td {
-    height: 24px;
 }
 
 .bottom-buttons {
@@ -574,9 +437,5 @@ export default {
 
 .customer-block .el-input{
     width:192px;
-}
-
-.sub-goods{
-    color: #C0C4CC
 }
 </style>

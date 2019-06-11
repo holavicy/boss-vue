@@ -131,22 +131,8 @@ export default {
 </script>
 
 <style scoped>
-.order-block {
-    display: flex;
-    margin-top: 10px;
-    flex-wrap: wrap;
-}
 
-.customer-block {
-    margin-top: 10px;
-    display: flex;
-}
-
-.customer-block .input-block {
-    width: 50%;
-}
-
-.el-select, .el-input {
+.el-input {
     width: auto;
 }
 
@@ -154,51 +140,7 @@ export default {
     width: 100%;
 }
 
-.el-dialog__body {
-    box-sizing: border-box;
-}
-
 .el-button {
     line-height: 0;
-}
-
-.customer-block .el-input-group{
-    width: 80%;
-}
-
-.goods-block {
-    margin-top: 10px;
-}
-.selectedGoodsTable{
-    margin-top: 10px;
-}
-.selectedGoodsTable td {
-    height: 24px;
-}
-
-.bottom-buttons {
-    margin-top: 10px;
-}
-.goods-block .el-button, .customer-block .el-button {
-    height: 26px;
-    border-radius: 0 6px 6px 0;
-    padding: 8px;
-}
-
-.store >>> .el-input__inner, .cus-name >>> .el-input__inner {
-    border-radius: 6px 0 0 6px !important;
-}
-
-.input-block label {
-    width: auto;
-}
-
-.customer-block .el-input{
-    width:192px;
-}
-
-.sub-goods{
-    /* background-color: #DCDFE6; */
-    color: #C0C4CC
 }
 </style>

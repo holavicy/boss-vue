@@ -89,16 +89,48 @@ function div(arg1,arg2){
    
       r2=Number(arg2.toString().replace(".",""));     
       return (r1/r2)*Math.pow(10,t2-t1);     
-}  
+}
+
+//格式化商品列表
+function formatGoodsList(list){
+    let formattedList = [];
+    if(list.length>0){
+        list.forEach(element => {
+            let indexNo = list.indexOf(element);
+            if(element.id){
+                element.childrenList =  element.childList?element.childList:[];
+                element.isMainGoods = true;
+                element.colSpan = element.childrenList.length;
+                element.indexNo = indexNo;
+                formattedList.push(element);
+                element.childrenList.forEach( child => {
+                    let childItem = child;
+                    childItem.isMainGoods = false;
+                    childItem.indexNo = indexNo;
+                    childItem.mainGoodsNum = element.num;
+                    childItem.mainGoodsDiscount = element.discount;
+                    childItem.mainGoodsSalePrice = element.salePrice;
+                    formattedList.push(childItem)
+                    })
+            } else {
+                formattedList.push(element)
+            }
+            
+        })
+    }
+    return formattedList;
+}
 
 export default{
     install: function(Vue){
         Vue.prototype.loading = loading;
+
         Vue.prototype.uploadFile = (url,payload,cancelToken,callback1) => uploadFile (url,payload,cancelToken,callback1);
         Vue.prototype.getAllCategory = () => getAllCategory ();
         Vue.prototype.add = (a,b) => add (a,b);
         Vue.prototype.mul = (a,b) => mul (a,b);
         Vue.prototype.sub = (a,b) => sub (a,b);
         Vue.prototype.div = (a,b) => div (a,b);
+        Vue.prototype.formatGoodsList = (list) => formatGoodsList(list);
     }
 };

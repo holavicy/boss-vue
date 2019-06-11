@@ -144,42 +144,8 @@ export default {
     width: 100%;
 }
 
-.el-dialog__body {
-    box-sizing: border-box;
-}
-
 .el-button {
     line-height: 0;
 }
 
-.goods-block {
-    margin-top: 10px;
-}
-.selectedGoodsTable{
-    margin-top: 10px;
-}
-.selectedGoodsTable td {
-    height: 24px;
-}
-
-.bottom-buttons {
-    margin-top: 10px;
-}
-.goods-block .el-button {
-    height: 26px;
-    border-radius: 0 6px 6px 0;
-    padding: 8px;
-}
-
-.store >>> .el-input__inner, .cus-name >>> .el-input__inner {
-    border-radius: 6px 0 0 6px !important;
-}
-
-.input-block label {
-    width: auto;
-}
-.sub-goods{
-    /* background-color: #DCDFE6; */
-    color: #C0C4CC
-}
 </style>

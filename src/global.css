@@ -38,6 +38,10 @@ button {
     pointer-events: none
 }
 
+.center {
+    text-align: center
+}
+
 /* table */
 .table{
     border-collapse: collapse;
